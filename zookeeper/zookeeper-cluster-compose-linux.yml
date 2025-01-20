@@ -1,0 +1,156 @@
+networks:
+  zk_network:
+    driver: bridge
+
+version: '3'
+services:
+  zk1:
+    image: zookeeper:3.8.4
+    container_name: zk1
+    hostname: zk1
+    restart: always
+    ports:
+      - "12181:2181"   # 客户端端口
+      - "12888:2888"   # 集群内节点通信端口
+      - "13888:3888"   # 集群选举端口
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - /docker/zookeeper/zk1/data:/data
+      - /docker/zookeeper/zk1/datalog:/datalog
+      - /docker/zookeeper/zk1/logs:/logs
+    networks:
+      - zk_network
+
+  zk2:
+    image: zookeeper:3.8.4
+    container_name: zk2
+    hostname: zk2
+    restart: always
+    ports:
+      - "22181:2181"   # 客户端端口
+      - "22888:2888"   # 集群内节点通信端口
+      - "23888:3888"   # 集群选举端口
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - /docker/zookeeper/zk2/data:/data
+      - /docker/zookeeper/zk2/datalog:/datalog
+      - /docker/zookeeper/zk2/logs:/logs
+    networks:
+      - zk_network
+
+  zk3:
+    image: zookeeper:3.8.4
+    container_name: zk3
+    hostname: zk3
+    restart: always
+    ports:
+      - "32181:2181"   # 客户端端口
+      - "32888:2888"   # 集群内节点通信端口
+      - "33888:3888"   # 集群选举端口
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - /docker/zookeeper/zk3/data:/data
+      - /docker/zookeeper/zk3/datalog:/datalog
+      - /docker/zookeeper/zk3/logs:/logs
+    networks:
+      - zk_network
+
+# Zookeeper Docker Compose 集群管理完整指令手册
+
+# 0. 前置准备工作
+# 0.1 确认已安装 Docker 和 Docker Compose
+# docker --version
+# docker-compose --version
+
+# 1. 目录操作
+# 1.1 切换到 zookeeper-cluster-compose-linux.yml 文件所在目录
+# cd /docker/zookeeper
+
+# 2. 容器生命周期管理
+# 2.1 创建并启动所有容器（后台运行）
+# docker-compose -f zookeeper-cluster-compose-linux.yml up -d
+
+# 2.2 停止并删除所有容器
+# docker-compose -f zookeeper-cluster-compose-linux.yml down
+
+# 2.3 停止特定服务的容器
+# docker-compose -f zookeeper-cluster-compose-linux.yml stop zk1
+# docker-compose -f zookeeper-cluster-compose-linux.yml stop zk2
+# docker-compose -f zookeeper-cluster-compose-linux.yml stop zk3
+
+# 2.4 启动特定服务的容器
+# docker-compose -f zookeeper-cluster-compose-linux.yml start zk1
+# docker-compose -f zookeeper-cluster-compose-linux.yml start zk2
+# docker-compose -f zookeeper-cluster-compose-linux.yml start zk3
+
+# 3. 容器状态查看
+# 3.1 查看所有容器状态
+# docker-compose -f zookeeper-cluster-compose-linux.yml ps
+
+# 3.2 查看所有容器日志
+# docker-compose -f zookeeper-cluster-compose-linux.yml logs
+
+# 3.3 查看特定容器日志
+# docker-compose -f zookeeper-cluster-compose-linux.yml logs zk1
+# docker-compose -f zookeeper-cluster-compose-linux.yml logs zk2
+# docker-compose -f zookeeper-cluster-compose-linux.yml logs zk3
+
+# 4. 容器交互
+# 4.1 进入特定容器的 shell
+# docker-compose -f zookeeper-cluster-compose-linux.yml exec zk1 /bin/bash
+# docker-compose -f zookeeper-cluster-compose-linux.yml exec zk2 /bin/bash
+# docker-compose -f zookeeper-cluster-compose-linux.yml exec zk3 /bin/bash
+
+# 5. Zookeeper 集群特定操作
+# 5.1 检查 Zookeeper 集群状态
+# docker-compose -f zookeeper-cluster-compose-linux.yml exec zk1 zkServer.sh status
+# docker-compose -f zookeeper-cluster-compose-linux.yml exec zk2 zkServer.sh status
+# docker-compose -f zookeeper-cluster-compose-linux.yml exec zk3 zkServer.sh status
+
+# 6. 资源管理
+# 6.1 查看容器资源使用情况
+# docker-compose -f zookeeper-cluster-compose-linux.yml top
+
+# 6.2 重启所有容器
+# docker-compose -f zookeeper-cluster-compose-linux.yml restart
+
+# 6.3 重启特定容器
+# docker-compose -f zookeeper-cluster-compose-linux.yml restart zk1
+# docker-compose -f zookeeper-cluster-compose-linux.yml restart zk2
+# docker-compose -f zookeeper-cluster-compose-linux.yml restart zk3
+
+# 7. 镜像管理
+# 7.1 拉取最新镜像
+# docker-compose -f zookeeper-cluster-compose-linux.yml pull
+
+# 7.2 构建或重建镜像
+# docker-compose -f zookeeper-cluster-compose-linux.yml build
+
+# 8. 网络和端口
+# 8.1 查看网络
+# docker network ls
+
+# 8.2 查看容器端口映射
+# docker-compose -f zookeeper-cluster-compose-linux.yml port zk1 2181
+# docker-compose -f zookeeper-cluster-compose-linux.yml port zk2 2181
+# docker-compose -f zookeeper-cluster-compose-linux.yml port zk3 2181
+
+# 9. 异常处理
+# 9.1 强制删除容器
+# docker-compose -f zookeeper-cluster-compose-linux.yml down -v --rmi all
+
+# 10. 生产环境建议
+# 10.1 日志轮转
+# 10.2 定期备份数据
+# 10.3 监控容器健康状态
+
+# 注意事项：
+# - 所有命令需要在 zookeeper-cluster-compose-linux.yml 文件所在目录执行
+# - 需要管理员权限
+# - 建议提前准备好数据目录

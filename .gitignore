@@ -1,5 +1,0 @@
-# 排除 yaml 目录及其内容
-!yaml/
-
-# 忽略 zookeeper
-/zookeeper
