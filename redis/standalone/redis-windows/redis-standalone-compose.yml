@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:7.2.4
+    container_name: redis-standalone
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - C:/docker/redis/standalone/data:/data
+      - C:/docker/redis/standalone/logs:/var/log/redis
+      - ./config/redis.conf:/etc/redis/redis.conf
+    command: redis-server /etc/redis/redis.conf
+    environment:
+      - TZ=Asia/Shanghai
+    networks:
+      - redis_network
+
+networks:
+  redis_network:
+    driver: bridge 
