@@ -16,14 +16,11 @@ fi
 # 创建必要的目录
 echo "[INFO] Creating directories..."
 mkdir -p /docker/redis/standalone/{data,logs}
-mkdir -p /var/redis
 
-# 设置目录权限，只需设置到/docker/redis这一层
+# 设置目录权限
 echo "[INFO] Setting directory permissions..."
 chown -R 1001:1001 /docker/redis
 chmod -R 755 /docker/redis
-chown -R 1001:1001 /var/redis
-chmod -R 755 /var/redis
 
 # 系统参数优化
 echo "[INFO] Optimizing system parameters..."
