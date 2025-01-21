@@ -2,6 +2,17 @@
 
 echo "[INFO] Starting Redis Standalone Server..."
 
+# 检查并拉取镜像
+echo "[INFO] Checking Redis image..."
+if ! docker images | grep -q "redis.*7.2.4"; then
+    echo "[INFO] Redis image not found, pulling from registry..."
+    docker pull redis:7.2.4
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] Failed to pull Redis image. Please check your network connection."
+        exit 1
+    fi
+fi
+
 # 创建必要的目录
 echo "[INFO] Creating directories..."
 mkdir -p /docker/redis/standalone/{data,logs}
@@ -38,4 +49,5 @@ else
     echo "[ERROR] Redis Standalone Server failed to start."
     echo "[INFO] Checking container logs..."
     docker logs redis-standalone
+    exit 1
 fi 
