@@ -19,7 +19,7 @@ mkdir -p /docker/redis/standalone/{data,logs}
 
 # 设置目录权限
 echo "[INFO] Setting directory permissions..."
-chown -R 1001:1001 /docker/redis
+chown -R 999:999 /docker/redis
 chmod -R 755 /docker/redis
 
 # 系统参数优化
